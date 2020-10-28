@@ -9,13 +9,14 @@ const app = express();
 
 app.use(bodyParser.json());
 
+// mysql://b52e7461f7c68f:58b4e85c@us-cdbr-east-02.cleardb.com/heroku_86eaed4516e7395?reconnect=true
 // MySql
 const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "customer",
-  socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock",
+  host: "us-cdbr-east-02.cleardb.com",
+  user: "b52e7461f7c68f",
+  password: "58b4e85c",
+  database: "heroku_86eaed4516e7395",
+  //   socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock",
 });
 
 // Route
