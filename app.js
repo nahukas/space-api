@@ -9,15 +9,92 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// MySQL
+// MySql
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "rootpass",
-  database: "node20_mysql",
+  password: "root",
+  database: "customer",
+  socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock",
 });
 
-// Check connection
+// Route
+app.get("/", (req, res) => {
+  res.send("Welcome to my API!");
+});
+
+// Get all customers
+app.get("/customers", (req, res) => {
+  const sql = "SELECT * FROM customer";
+
+  connection.query(sql, (error, results) => {
+    if (error) throw error;
+
+    if (results.length > 0) {
+      res.json(results);
+    } else {
+      res.send("Not result");
+    }
+  });
+});
+
+// Get customer by id
+app.get("/customers/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = `SELECT * FROM customer WHERE id = ${id}`;
+
+  connection.query(sql, (error, result) => {
+    if (error) throw error;
+
+    if (result.length > 0) {
+      res.json(result);
+    } else {
+      res.send("Not result");
+    }
+  });
+});
+
+// Update customer by id
+app.put("/customers/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, budget, budget_spent, date_of_first_purchase } = req.body;
+
+  const sql = `UPDATE customer SET name = '${name}', budget = '${budget}',  budget_spent = '${budget_spent}', date_of_first_purchase = '${date_of_first_purchase}' WHERE id =${id}`;
+  connection.query(sql, (error) => {
+    if (error) throw error;
+    res.send("Customer updated!");
+  });
+});
+
+// Add New customer
+app.post("/customers", (req, res) => {
+  const sql = "INSERT INTO customer SET ?";
+
+  const customerObj = {
+    name: req.body.name,
+    budget: req.body.budget,
+    budget_spent: req.body.budget_spent,
+    date_of_first_purchase: req.body.date_of_first_purchase,
+  };
+
+  connection.query(sql, customerObj, (error) => {
+    if (error) throw error;
+    res.send("Customer created!");
+  });
+});
+
+// Delete customer by id
+app.delete("/customers/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = `DELETE FROM customer WHERE id = ${id}`;
+
+  connection.query(sql, (error) => {
+    if (error) throw error;
+    res.send("Delete customer");
+  });
+});
+
+// Check connect
 connection.connect((error) => {
   if (error) throw error;
   console.log("Database server running!");
